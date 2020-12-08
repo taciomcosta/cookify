@@ -6,11 +6,17 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
+
+	"github.com/taciomcosta/cookify/internal/config"
 )
 
-// TODO: export to env var
-var url = "http://www.recipepuppy.com/api/"
-var client = &http.Client{}
+var url string
+var client *http.Client
+
+func init() {
+	url = config.GetString("RECIPEPUPPY_URL")
+	client = &http.Client{}
+}
 
 func FindRecipes(ingredients string, query string, page int) ([]PuppyRecipeDTO, error) {
 	request, err := newRequest(ingredients, query, page)

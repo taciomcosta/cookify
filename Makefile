@@ -2,16 +2,16 @@ all:
 	go run ./cmd/webapi/main.go
 
 test:
-	go run ./cmd/webapi/main.go
+	go test ./...
 
 test-cov:
 	go run ./cmd/webapi/main.go
 
 unit-test:
-	go run ./cmd/webapi/main.go
+	go test ./...
 
 integration-test:
-	go run ./cmd/webapi/main.go
+	go test ./...
 
 lint:
 	go run ./cmd/webapi/main.go

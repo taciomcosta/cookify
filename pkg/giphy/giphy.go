@@ -5,12 +5,19 @@ import (
 	"errors"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/taciomcosta/cookify/internal/config"
 )
 
-// TODO: export to env var
-var url = "https://api.giphy.com/v1/gifs/search"
-var apiKey = "pPiMNFkdnBt4wGmBiJ9YCryAw3lHJk98"
-var client = &http.Client{}
+var url string
+var apiKey string
+var client *http.Client
+
+func init() {
+	url = config.GetString("GLIPHY_URL")
+	apiKey = config.GetString("GLIPHY_APIKEY")
+	client = &http.Client{}
+}
 
 func Search(query string) (*GiphySearchResponse, error) {
 	request, err := newRequest(query)
