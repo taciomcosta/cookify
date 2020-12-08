@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"strings"
 	"sync"
 
@@ -22,6 +23,11 @@ func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsR
 		return FindByIngredientsResponse{}, err
 	}
 
+	err = checkServicesStatuses()
+	if err != nil {
+		return FindByIngredientsResponse{}, err
+	}
+
 	puppyRecipes, err := recipepuppy.FindRecipes(ingredients, "", 1)
 	if err != nil {
 		return FindByIngredientsResponse{}, err
@@ -34,6 +40,20 @@ func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsR
 		Recipes:  recipes,
 	}
 	return response, nil
+}
+
+func checkServicesStatuses() error {
+	_, err := recipepuppy.FindRecipes("", "", 1)
+	if err != nil {
+		return errors.New("Service unavailable: RecipePuppy")
+	}
+
+	_, err = giphy.Search("")
+	if err != nil {
+		return errors.New("Service unavailable: Giphy")
+	}
+
+	return nil
 }
 
 func parseManyRecipes(puppyRecipes []recipepuppy.PuppyRecipeDTO) []models.Recipe {
