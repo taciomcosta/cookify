@@ -1,33 +1,43 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
-	"github.com/taciomcosta/cookify/pkg/giphy"
+	"github.com/gorilla/mux"
+	"github.com/taciomcosta/cookify/cmd/webapi/handlers"
+	"github.com/taciomcosta/cookify/cmd/webapi/middlewares"
+	"github.com/taciomcosta/cookify/internal/config"
 )
 
+var serverAddress = config.GetString("SERVER_ADDRESS")
+var swaggerURLPath = "/swagger"
+var router *mux.Router = mux.NewRouter()
+
 func main() {
-	fmt.Println("Hello, world")
+	//addSwagger(router)
+	addHandlers(router)
+	addMiddlewares(router)
+	serve()
+}
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		res := []byte("Hello, world")
+func addSwagger(router *mux.Router) {
+	fileServer := http.FileServer(http.Dir("./swagger/"))
+	handler := http.StripPrefix("/swagger", fileServer)
+	router.PathPrefix(swaggerURLPath).Handler(handler)
+}
 
-		//recipes, err := recipepuppy.FindRecipes("onions, tomato", "", 3)
-		//if err != nil {
-		//fmt.Println(err)
-		//}
-		//fmt.Println(recipes)
+func addHandlers(router *mux.Router) {
+	router.HandleFunc("/", handlers.FindRecipes).Methods("GET")
+}
 
-		gifs, err := giphy.Search("cheeseburger")
-		if err != nil {
-			fmt.Println(err)
-		}
+func addMiddlewares(r *mux.Router) {
+	r.Use(middlewares.Json)
+	r.Use(middlewares.Logging)
+}
 
-		fmt.Println(gifs)
-
-		w.Write(res)
-	})
-
-	http.ListenAndServe(":3000", nil)
+func serve() {
+	log.Printf("Server listening on %s\n", serverAddress)
+	http.Handle("/", router)
+	http.ListenAndServe(serverAddress, nil)
 }
