@@ -5,25 +5,33 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/taciomcosta/cookify/internal/models"
-
 	"github.com/taciomcosta/cookify/internal/services"
 )
 
-var recipeService models.RecipeService
+var recipeService = services.RecipeService{}
 
-func init() {
-	recipeService = services.NewRecipeService()
-}
-
-func FindRecipes(w http.ResponseWriter, r *http.Request) {
-	recipes, err := recipeService.FindByIngredients("")
-
-	bytes, err := json.Marshal(recipes)
+func FindRecipes(writer http.ResponseWriter, request *http.Request) {
+	ingredients := request.URL.Query().Get("i")
+	response, err := recipeService.FindByIngredients(ingredients)
 	if err != nil {
-		fmt.Println(err)
+		respondWithError(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
+	respondSuccess(writer, response)
+}
 
-	w.Write(bytes)
+func respondSuccess(writer http.ResponseWriter, value interface{}) {
+	bytes, err := json.Marshal(value)
+	if err != nil {
+		respondWithError(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	writer.Write(bytes)
+}
+
+func respondWithError(writer http.ResponseWriter, message string, code int) {
+	errorMessage := fmt.Sprintf(`{"error": "%s"}`, message)
+	bytes := []byte(errorMessage)
+	writer.WriteHeader(code)
+	writer.Write(bytes)
 }

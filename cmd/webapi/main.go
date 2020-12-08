@@ -28,7 +28,7 @@ func addSwagger(router *mux.Router) {
 }
 
 func addHandlers(router *mux.Router) {
-	router.HandleFunc("/", handlers.FindRecipes).Methods("GET")
+	router.HandleFunc("/recipes", handlers.FindRecipes).Methods("GET")
 }
 
 func addMiddlewares(r *mux.Router) {
