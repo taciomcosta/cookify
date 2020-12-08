@@ -50,6 +50,7 @@ func newRequest(query string) (*http.Request, error) {
 
 func parseResponse(response *http.Response) (*GiphySearchResponse, error) {
 	bytes, err := ioutil.ReadAll(response.Body)
+	//defer response.Body.Close()
 	if err != nil {
 		return &GiphySearchResponse{}, errors.New("failed parsing Giphy response")
 	}

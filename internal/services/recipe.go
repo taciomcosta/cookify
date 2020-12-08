@@ -18,12 +18,7 @@ type FindByIngredientsResponse struct {
 }
 
 func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsResponse, error) {
-	keywords, err := models.ParseIngredients(ingredients)
-	if err != nil {
-		return FindByIngredientsResponse{}, err
-	}
-
-	err = checkServicesStatuses()
+	err := checkServicesStatuses()
 	if err != nil {
 		return FindByIngredientsResponse{}, err
 	}
@@ -33,11 +28,16 @@ func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsR
 		return FindByIngredientsResponse{}, err
 	}
 	recipes := parseManyRecipes(puppyRecipes)
-	enhanceManyWithGif(recipes)
+	enhanceManyWithGifs(recipes)
+
+	keywords, err := models.ParseIngredients(ingredients)
+	if err != nil {
+		return FindByIngredientsResponse{}, err
+	}
 
 	response := FindByIngredientsResponse{
-		Keywords: keywords,
 		Recipes:  recipes,
+		Keywords: keywords,
 	}
 	return response, nil
 }
@@ -74,7 +74,7 @@ func parseOneRecipe(puppyRecipe recipepuppy.PuppyRecipeDTO) models.Recipe {
 	}
 }
 
-func enhanceManyWithGif(recipes []models.Recipe) {
+func enhanceManyWithGifs(recipes []models.Recipe) {
 	var group sync.WaitGroup
 	group.Add(len(recipes))
 	for i := range recipes {
