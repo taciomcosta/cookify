@@ -20,4 +20,10 @@ You can also run the API using `make`.
 There are many other useful `make` commands to help you contribute with
 the project, like: `make test`, `make lint`.
 
+## Swagger
+
+You can find the available endpoints at `http://localhost:3000/swagger/`
+
+---
+
 _This project is a challenge proposed by [DeliveryMuch](https://www.deliverymuch.com.br/) :hearts:_
