@@ -1,4 +1,6 @@
-# Cookify - A WebAPI with delicious recipes and funny GIFS
+# Cookify
+
+_**A WebAPI with delicious recipes and funny GIFS**_
 
 Cookify lets you search for recipes that have your favorite ingredients.
 
