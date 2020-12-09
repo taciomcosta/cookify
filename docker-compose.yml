@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  cookify:
+    build: .
+    ports: 
+    - "4000:4000"
+    environment:
+      - GLIPHY_URL="https://api.giphy.com/v1/gifs/search"
+      - GLIPHY_APIKEY="pPiMNFkdnBt4wGmBiJ9YCryAw3lHJk98"
+      - RECIPEPUPPY_URL="http://www.recipepuppy.com/api/"
+      - SERVER_ADDRESS="localhost:4000"

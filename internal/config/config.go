@@ -1,20 +1,17 @@
 package config
 
 import (
-	"fmt"
+	"os"
+
 	"github.com/joho/godotenv"
 )
 
 var env map[string]string
 
 func init() {
-	config, err := godotenv.Read()
-	if err != nil {
-		fmt.Println("Could not read config from .env")
-	}
-	env = config
+	godotenv.Load()
 }
 
 func GetString(key string) string {
-	return env[key]
+	return os.Getenv(key)
 }
