@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"sort"
 	"strings"
 	"sync"
 
@@ -74,10 +75,21 @@ func parseManyRecipes(puppyRecipes []recipepuppy.Recipe) []models.Recipe {
 func parseOneRecipe(puppyRecipe recipepuppy.Recipe) models.Recipe {
 	return models.Recipe{
 		Title:       puppyRecipe.Title,
-		Ingredients: strings.Split(puppyRecipe.Ingredients, ","),
+		Ingredients: parsePuppyIngredients(puppyRecipe.Ingredients),
 		Link:        puppyRecipe.Href,
 		Gif:         "",
 	}
+}
+
+func parsePuppyIngredients(ingredients string) models.Ingredients {
+	parsed := strings.Split(ingredients, ",")
+
+	for i := range parsed {
+		parsed[i] = strings.TrimSpace(parsed[i])
+	}
+
+	sort.Strings(parsed)
+	return parsed
 }
 
 func enhanceManyWithGifs(recipes []models.Recipe) {
