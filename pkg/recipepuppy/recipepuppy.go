@@ -18,15 +18,16 @@ func init() {
 	client = &http.Client{}
 }
 
-func FindRecipes(ingredients string, query string, page int) ([]PuppyRecipeDTO, error) {
+// FindRecipes wraps recipes endpoint of RecipePuppy's API.
+func FindRecipes(ingredients string, query string, page int) ([]Recipe, error) {
 	request, err := newRequest(ingredients, query, page)
 	if err != nil {
-		return []PuppyRecipeDTO{}, err
+		return []Recipe{}, err
 	}
 
 	response, err := client.Do(request)
 	if err != nil {
-		return []PuppyRecipeDTO{}, err
+		return []Recipe{}, err
 	}
 
 	return parsePuppyRecipes(response)
@@ -47,16 +48,17 @@ func newRequest(ingredients string, query string, page int) (*http.Request, erro
 	return request, nil
 }
 
-func parsePuppyRecipes(response *http.Response) ([]PuppyRecipeDTO, error) {
+func parsePuppyRecipes(response *http.Response) ([]Recipe, error) {
 	bytes, err := ioutil.ReadAll(response.Body)
+	defer response.Body.Close()
 	if err != nil {
-		return []PuppyRecipeDTO{}, errors.New("failed parsing Puppy Recipe response")
+		return []Recipe{}, errors.New("failed parsing Puppy Recipe response")
 	}
 
-	var parsedResponse PuppyRecipeResponse
+	var parsedResponse RecipeResponse
 	err = json.Unmarshal(bytes, &parsedResponse)
 	if err != nil {
-		return []PuppyRecipeDTO{}, errors.New("failed parsing Puppy Recipe response")
+		return []Recipe{}, errors.New("failed parsing Puppy Recipe response")
 	}
 
 	return parsedResponse.Results, err
