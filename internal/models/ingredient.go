@@ -6,11 +6,13 @@ import (
 	"strings"
 )
 
+// Ingredients represents many ingredients in the domain model.
 type Ingredients []string
-type Ingredient string
 
 const maxIngredientsAllowed = 3
 
+// ParseIngredients parses a comma separeted list of strings
+// into a sorted slice of ingredients (Ingredients).
 func ParseIngredients(ingredients string) (Ingredients, error) {
 	parsed := strings.Split(ingredients, ",")
 

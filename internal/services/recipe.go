@@ -10,13 +10,19 @@ import (
 	"github.com/taciomcosta/cookify/pkg/recipepuppy"
 )
 
+// RecipeService makes application rules of recipes
+// available for external adapters to be plugged in (http, amqp, grpc)
 type RecipeService struct{}
 
+// FindByIngredientsResponse represents the format
+// of data returned by FindByIngredients.
 type FindByIngredientsResponse struct {
 	Keywords models.Ingredients `json:"keywords"`
 	Recipes  []models.Recipe    `json:"recipes"`
 }
 
+// FindByIngredients finds recipes and its gifs
+// by consuming external services.
 func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsResponse, error) {
 	err := checkServicesStatuses()
 	if err != nil {
@@ -56,7 +62,7 @@ func checkServicesStatuses() error {
 	return nil
 }
 
-func parseManyRecipes(puppyRecipes []recipepuppy.PuppyRecipeDTO) []models.Recipe {
+func parseManyRecipes(puppyRecipes []recipepuppy.Recipe) []models.Recipe {
 	recipes := make([]models.Recipe, 0)
 	for _, puppyRecipe := range puppyRecipes {
 		recipe := parseOneRecipe(puppyRecipe)
@@ -65,7 +71,7 @@ func parseManyRecipes(puppyRecipes []recipepuppy.PuppyRecipeDTO) []models.Recipe
 	return recipes
 }
 
-func parseOneRecipe(puppyRecipe recipepuppy.PuppyRecipeDTO) models.Recipe {
+func parseOneRecipe(puppyRecipe recipepuppy.Recipe) models.Recipe {
 	return models.Recipe{
 		Title:       puppyRecipe.Title,
 		Ingredients: strings.Split(puppyRecipe.Ingredients, ","),
@@ -98,5 +104,5 @@ func findGif(title string) string {
 		return ""
 	}
 
-	return response.Data[0].Images.Original.Url
+	return response.Data[0].Images.Original.URL
 }

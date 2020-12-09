@@ -12,6 +12,7 @@ func init() {
 	godotenv.Load()
 }
 
+// GetString gets an environment variable in string format.
 func GetString(key string) string {
 	return os.Getenv(key)
 }
