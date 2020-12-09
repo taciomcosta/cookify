@@ -1,0 +1,81 @@
+openapi: 3.0.1
+info:
+  title: Cookify
+  description: 'Rest API with delicious recipes and GIFs.'
+  contact:
+    email: taciomcosta@gmail.com
+  version: 1.0.0
+servers:
+- url: http://localhost:3000
+tags:
+- name: Recipe
+  description: Everything about recipes
+paths:
+  /recipes:
+    get:
+      tags:
+      - recipe
+      summary: Finds recipes
+      description: Given a list of ingredients, finds up to 20 delicious recipes.
+      operationId: listRecipes
+      parameters:
+      - name: i
+        in: query
+        description: Comma separated ingredients
+        required: false
+        style: form
+        schema:
+          type: string
+      responses:
+        200:
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  keywords:
+                    type: array
+                    items:
+                      type: string
+                      example: "onions"
+                  recipes:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Recipe'
+        400:
+          description: Bad Request
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    Recipe:
+      required:
+      - title
+      - ingredients
+      - link
+      - gif
+      type: object
+      properties:
+        title:
+          type: string
+          example: Greek Omelet with Feta
+        link:
+          type: string
+          example: http://www.kraftfoods.com/kf/recipes/greek-omelet-feta-104508.aspx
+        gif:
+          type: string
+          example: https://media.giphy.com/media/xBRhcST67lI2c/giphy.gif
+        ingredients:
+          type: array
+          items:
+            example: ["eggs", "feta cheese", "garlic", "red onions", "spinach", "tomato", "water"]
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: Service unavailable RecipePuppy
+

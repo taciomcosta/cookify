@@ -15,7 +15,7 @@ var swaggerURLPath = "/swagger"
 var router *mux.Router = mux.NewRouter()
 
 func main() {
-	//addSwagger(router)
+	addSwagger(router)
 	addHandlers(router)
 	addMiddlewares(router)
 	serve()
@@ -23,7 +23,7 @@ func main() {
 
 func addSwagger(router *mux.Router) {
 	fileServer := http.FileServer(http.Dir("./swagger/"))
-	handler := http.StripPrefix("/swagger", fileServer)
+	handler := http.StripPrefix(swaggerURLPath, fileServer)
 	router.PathPrefix(swaggerURLPath).Handler(handler)
 }
 
@@ -39,5 +39,6 @@ func addMiddlewares(r *mux.Router) {
 func serve() {
 	log.Printf("Server listening on %s\n", serverAddress)
 	http.Handle("/", router)
-	http.ListenAndServe(serverAddress, nil)
+	err := http.ListenAndServe(serverAddress, nil)
+	log.Fatal(err)
 }
