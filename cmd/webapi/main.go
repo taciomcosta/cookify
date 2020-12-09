@@ -32,7 +32,7 @@ func addHandlers(router *mux.Router) {
 }
 
 func addMiddlewares(r *mux.Router) {
-	r.Use(middlewares.Json)
+	r.Use(middlewares.JSON)
 	r.Use(middlewares.Logging)
 }
 

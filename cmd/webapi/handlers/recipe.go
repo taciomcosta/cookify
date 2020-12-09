@@ -10,6 +10,7 @@ import (
 
 var recipeService = services.RecipeService{}
 
+// FindRecipes is handler for finding recipes along with gifs
 func FindRecipes(writer http.ResponseWriter, request *http.Request) {
 	ingredients := request.URL.Query().Get("i")
 	response, err := recipeService.FindByIngredients(ingredients)
