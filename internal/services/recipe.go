@@ -2,8 +2,6 @@ package services
 
 import (
 	"errors"
-	"sort"
-	"strings"
 	"sync"
 
 	"github.com/taciomcosta/cookify/internal/models"
@@ -34,7 +32,7 @@ func (s RecipeService) FindByIngredients(ingredients string) (FindByIngredientsR
 	if err != nil {
 		return FindByIngredientsResponse{}, err
 	}
-	recipes := parseManyRecipes(puppyRecipes)
+	recipes := models.ParseManyRecipes(puppyRecipes)
 	enhanceManyWithGifs(recipes)
 
 	keywords, err := models.ParseIngredients(ingredients)
@@ -61,35 +59,6 @@ func checkServicesStatuses() error {
 	}
 
 	return nil
-}
-
-func parseManyRecipes(puppyRecipes []recipepuppy.Recipe) []models.Recipe {
-	recipes := make([]models.Recipe, 0)
-	for _, puppyRecipe := range puppyRecipes {
-		recipe := parseOneRecipe(puppyRecipe)
-		recipes = append(recipes, recipe)
-	}
-	return recipes
-}
-
-func parseOneRecipe(puppyRecipe recipepuppy.Recipe) models.Recipe {
-	return models.Recipe{
-		Title:       puppyRecipe.Title,
-		Ingredients: parsePuppyIngredients(puppyRecipe.Ingredients),
-		Link:        puppyRecipe.Href,
-		Gif:         "",
-	}
-}
-
-func parsePuppyIngredients(ingredients string) models.Ingredients {
-	parsed := strings.Split(ingredients, ",")
-
-	for i := range parsed {
-		parsed[i] = strings.TrimSpace(parsed[i])
-	}
-
-	sort.Strings(parsed)
-	return parsed
 }
 
 func enhanceManyWithGifs(recipes []models.Recipe) {
